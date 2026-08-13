@@ -78,7 +78,7 @@ foreach ($Profile in $Profiles) {
     
     # Launch Chrome for this specific profile directly to the extensions page
     Write-Host "-> Launching Chrome..." -ForegroundColor Gray
-    Start-Process $ChromePath -ArgumentList "--profile-directory=`"$ProfileName`"", "chrome://extensions"
+    Start-Process $ChromePath -ArgumentList "chrome://extensions/ --profile-directory=`"$ProfileName`""
     
     if ($CurrentIndex -lt $ProfileCount) {
         Read-Host "Press [Enter] when ready to open the next profile..."
