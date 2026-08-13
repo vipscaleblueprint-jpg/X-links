@@ -25,8 +25,7 @@ const pendingRedirects = {};
 // (These must match what's in rules.json)
 
 const DESIGN_URL_PATTERNS = [
-  /canva\.com\/design\//i,
-  /canva\.com\/[a-z_-]{2,10}\/design\//i
+  /^https?:\/\/([^/]+\.)?canva\.com\/([^/]+\/)*design\//i
 ];
 
 function isDesignUrl(url) {
@@ -84,10 +83,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(
   },
   {
     url: [
-      { hostEquals: 'canva.com',  pathPrefix: '/design/' },
-      { hostSuffix: '.canva.com', pathPrefix: '/design/' },
-      { hostEquals: 'canva.com',  urlMatches: '/[a-z_-]{2,10}/design/' },
-      { hostSuffix: '.canva.com', urlMatches: '/[a-z_-]{2,10}/design/' }
+      { hostSuffix: 'canva.com', urlMatches: '/design/' }
     ]
   }
 );
@@ -109,10 +105,7 @@ chrome.webNavigation.onCommitted.addListener(
   },
   {
     url: [
-      { hostEquals: 'canva.com',  pathPrefix: '/design/' },
-      { hostSuffix: '.canva.com', pathPrefix: '/design/' },
-      { hostEquals: 'canva.com',  urlMatches: '/[a-z_-]{2,10}/design/' },
-      { hostSuffix: '.canva.com', urlMatches: '/[a-z_-]{2,10}/design/' }
+      { hostSuffix: 'canva.com', urlMatches: '/design/' }
     ]
   }
 );
@@ -251,7 +244,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         action: { type: 'allow' },
         condition: {
           tabIds: [tabId],
-          urlFilter: '||canva.com/design/'
+          regexFilter: '^https?://([^/]+\\.)?canva\\.com/([^/]+/)*design/'
         }
       }],
       removeRuleIds: [tabId]
