@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": { "extensionPath": "/warning.html" }
+    },
+    "condition": {
+      "urlFilter": "||canva.com/design/",
+      "resourceTypes": ["main_frame"],
+      "excludedInitiatorDomains": ["canva.com"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": { "extensionPath": "/warning.html" }
+    },
+    "condition": {
+      "regexFilter": "canva\\.com/[a-z_-]{2,10}/design/",
+      "resourceTypes": ["main_frame"],
+      "excludedInitiatorDomains": ["canva.com"]
+    }
+  }
+]

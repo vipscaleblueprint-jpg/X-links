@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X-links</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-text">X-links</span>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        Active
+      </div>
+    </header>
+
+    <!-- Current Team Chip -->
+    <div class="team-chip" id="team-chip">
+      <svg class="team-chip-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="team-chip-label">Active team:</span>
+      <span class="team-badge" id="team-name">Detecting…</span>
+    </div>
+
+    <!-- Status Banner -->
+    <div class="status-banner">
+      <svg class="status-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="status-text">
+        <span class="status-title">Protection Active</span>
+        <span class="status-desc">Canva design links redirect to canva.com, select the correct team before opening.</span>
+      </div>
+    </div>
+
+    <!-- Section Header -->
+    <div class="section-header">
+      <span class="section-title">
+        Redirected Links
+        <span class="badge" id="blocked-count">0</span>
+      </span>
+      <button class="btn-clear" id="btn-clear">Clear</button>
+    </div>
+
+    <!-- Log List -->
+    <div class="log-list" id="log-list"></div>
+
+    <!-- Empty State / Features Showcase -->
+    <div class="empty-state" id="empty-state">
+      <h2 class="welcome-title">Welcome to X-links</h2>
+      <p class="welcome-subtitle">Accidental Canva team exposure is blocked.</p>
+      
+      <div class="features-list">
+        <!-- Feature 1 -->
+        <div class="feature-item">
+          <div class="feature-icon-box shield">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="feature-details">
+            <div class="feature-name">Accidental Click Shield</div>
+            <div class="feature-desc">Blocks design link requests externally before Canva logs the viewed state.</div>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-item">
+          <div class="feature-icon-box team">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+              <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="feature-details">
+            <div class="feature-name">Dynamic Team Avatar</div>
+            <div class="feature-desc">The Chrome extension icon dynamically shows the initials & color of the active Canva team.</div>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-item">
+          <div class="feature-icon-box warning">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/>
+              <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2"/>
+              <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="feature-details">
+            <div class="feature-name">Team Guard Warning</div>
+            <div class="feature-desc">Redirects to a warning tab showing the active team before loading the design.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
