@@ -27,12 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── Resolve State ───────────────────────────────────────────────────────────
 function resolveBlockedState() {
-  // Query background for the original URL of this tab
-  chrome.runtime.sendMessage({ type: 'getOriginalUrl' }, (response) => {
-    if (response?.url) {
-      originalUrl = response.url;
-    }
-  });
+  // Get original URL directly from the query parameter
+  const search = window.location.search;
+  if (search.startsWith('?url=')) {
+    originalUrl = decodeURIComponent(search.substring(5));
+  }
 
   // Query background/storage for the most recently active Canva team
   chrome.storage.local.get({ lastDetectedTeam: null }, (data) => {
@@ -54,14 +53,17 @@ function resolveBlockedState() {
 
 // ─── Handlers ────────────────────────────────────────────────────────────────
 function handleCopy() {
-  if (!originalUrl) {
+  if (originalUrl) {
+    copyToClipboard(originalUrl);
+  } else {
     alert('Error: Could not resolve original link destination.');
-    return;
   }
+}
 
+function copyToClipboard(url) {
   // Request the background worker to whitelist this URL for 5 seconds
-  chrome.runtime.sendMessage({ type: 'whitelistUrlTemporarily', url: originalUrl }, () => {
-    navigator.clipboard.writeText(originalUrl).then(() => {
+  chrome.runtime.sendMessage({ type: 'whitelistUrlTemporarily', url: url }, () => {
+    navigator.clipboard.writeText(url).then(() => {
       const btnText = el.btnCopy.querySelector('span');
       const originalText = btnText.textContent;
       btnText.textContent = 'Copied!';

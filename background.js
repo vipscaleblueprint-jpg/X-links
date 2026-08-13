@@ -19,7 +19,6 @@
  */
 
 const CANVA_HOME = 'https://www.canva.com/';
-const pendingRedirects = {};
 
 // ─── URL patterns that declarativeNetRequest blocks ───────────────────────────
 // (These must match what's in rules.json)
@@ -54,9 +53,10 @@ chrome.webNavigation.onBeforeNavigate.addListener(
     // Only log if it's genuinely a design URL
     if (!isDesignUrl(details.url)) return;
 
+
+
     chrome.tabs.get(details.tabId, (tab) => {
       if (chrome.runtime.lastError || !tab) {
-        pendingRedirects[details.tabId] = details.url;
         logInterceptedNavigation(details.url);
         return;
       }
@@ -72,11 +72,9 @@ chrome.webNavigation.onBeforeNavigate.addListener(
           if (!chrome.runtime.lastError && openerTab && openerTab.url && isCanvaDomain(openerTab.url)) {
             return; // Don't log: allowed by declarativeNetRequest
           }
-          pendingRedirects[details.tabId] = details.url;
           logInterceptedNavigation(details.url);
         });
       } else {
-        pendingRedirects[details.tabId] = details.url;
         logInterceptedNavigation(details.url);
       }
     });
@@ -100,8 +98,7 @@ chrome.webNavigation.onCommitted.addListener(
       removeRuleIds: [details.tabId, 999999]
     });
 
-    // Clean up original URL record
-    delete pendingRedirects[details.tabId];
+
   },
   {
     url: [
@@ -200,10 +197,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
   }
 
-  // Warning screen requests the original URL of the redirect
-  if (message.type === 'getOriginalUrl' && sender.tab) {
-    const originalUrl = pendingRedirects[sender.tab.id] || null;
-    sendResponse({ url: originalUrl });
+  // Warning screen requests the original URL of the redirect (Legacy - now parsed from query string)
+  if (message.type === 'getOriginalUrl') {
+    sendResponse({ url: null });
   }
 
   // Warning screen requests to temporarily whitelist a copied URL for 5 seconds
@@ -255,6 +251,36 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
+// ─── Declarative Net Request Dynamic Rules ────────────────────────────────────
+
+function registerRedirectRule() {
+  const extensionWarningUrl = chrome.runtime.getURL('warning.html');
+
+  chrome.declarativeNetRequest.updateDynamicRules({
+    removeRuleIds: [1],
+    addRules: [
+      {
+        id: 1,
+        priority: 1,
+        action: {
+          type: 'redirect',
+          redirect: {
+            regexSubstitution: `${extensionWarningUrl}?url=\\0`
+          }
+        },
+        condition: {
+          regexFilter: '^https?://([^/]+\\.)?canva\\.com/([^/]+/)*design/(.*)',
+          resourceTypes: ['main_frame'],
+          excludedInitiatorDomains: ['canva.com']
+        }
+      }
+    ]
+  });
+}
+
+// Call on startup load
+registerRedirectRule();
+
 // ─── Tab Clean-up ────────────────────────────────────────────────────────────
 
 chrome.tabs.onRemoved.addListener((tabId) => {
@@ -262,7 +288,6 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   chrome.declarativeNetRequest.updateSessionRules({
     removeRuleIds: [tabId]
   });
-  delete pendingRedirects[tabId];
 
   chrome.storage.local.get({ tabTeams: {} }, (data) => {
     const tabTeams = data.tabTeams;
@@ -273,12 +298,14 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   });
 });
 
-// Reset all tab teams on startup/install to avoid stale IDs
+// Reset all tab teams on startup/install to avoid stale IDs and register dynamic rules
 chrome.runtime.onStartup.addListener(() => {
   chrome.storage.local.set({ tabTeams: {} });
   chrome.storage.local.set({ lastDetectedTeam: null });
+  registerRedirectRule();
 });
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({ tabTeams: {} });
   chrome.storage.local.set({ lastDetectedTeam: null });
+  registerRedirectRule();
 });
